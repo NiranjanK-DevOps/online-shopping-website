@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Online Shopping App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    #products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .card {
+      border: 1px solid #ddd;
+      width: 220px;
+      padding: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+    .card h3 {
+      margin: 5px 0;
+    }
+    .price {
+      font-weight: bold;
+      margin: 5px 0 10px 0;
+    }
+    .btn {
+      padding: 8px 15px;
+      border: none;
+      cursor: pointer;
+      background:#1e88e5;
+      color:#fff;
+      border-radius:4px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Online Shopping App</h2>
+
+<div id="products"></div>
+
+<script type="module">
+  // Import Firebase SDKs from CDN
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // Your Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyDZx23DnUYnzq_s7zH8gYcF8HO51Dtde48",
+    authDomain: "online-shopping-app-b66c5.firebaseapp.com",
+    projectId: "online-shopping-app-b66c5",
+    storageBucket: "online-shopping-app-b66c5.firebasestorage.app",
+    messagingSenderId: "532670004568",
+    appId: "1:532670004568:web:cd2066053bc4002a27392d",
+    measurementId: "G-2KTH8EVFXN"
+  };
+
+  // Initialize Firebase and Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const list = document.getElementById("products");
+
+  async function loadProducts() {
+    list.innerHTML = "<p>Loading products...</p>";
+
+    try {
+      const snap = await getDocs(collection(db, "products"));
+
+      if (snap.empty) {
+        list.innerHTML = "<p>No products found.</p>";
+        return;
+      }
+
+      let html = "";
+      snap.forEach(doc => {
+        const p = doc.data();
+
+        html += `
+          <div class="card">
+            <img src="${p.image}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <div class="price">₹${p.price}</div>
+            <button class="btn" onclick="alert('Added ${p.name} to cart')">
+              Add to cart
+            </button>
+          </div>
+        `;
+      });
+
+      list.innerHTML = html;
+
+    } catch (err) {
+      console.error(err);
+      list.innerHTML = "<p>Error loading products. Check console.</p>";
+    }
+  }
+
+  loadProducts();
+</script>
+
+</body>
+</html>
